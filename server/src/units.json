@@ -1,0 +1,35 @@
+[
+    {
+        "id": 0,
+        "name": "Center Module",
+        "price": {},
+        "effect": {
+            "moonstone": 10,
+            "energy": 20,
+            "food": 10,
+            "water": 10,
+            "oxygen": 10,
+            "housing": 15
+        }
+    },
+    {
+        "id": 1,
+        "name": "House Module",
+        "price": {
+            "moonstone": 50
+        },
+        "effect": {
+            "housing": 5
+        }
+    },
+    {
+        "id": 2,
+        "name": "People Center",
+        "price": {
+            "moonstone": 250
+        },
+        "effect": {
+            "housing": 20
+        }
+    }
+]

@@ -1,0 +1,21 @@
+{
+    "type": "module",
+    "name": "moonquest",
+    "version": "0.1.0",
+    "description": "A resource counters thing for a Welpen camp",
+    "license": "MIT",
+    "author": "Bastiaan van der Plaat <bastiaan.v.d.plaat@gmail.com>",
+    "main": "src/index.js",
+    "scripts": {
+        "start": "node src/index.js",
+        "lint": "eslint --ignore-path .gitignore ."
+    },
+    "dependencies": {
+        "ws": "^8.14.2"
+    },
+    "devDependencies": {
+        "eslint": "^8.52.0",
+        "eslint-config-prettier": "^8.8.0",
+        "prettier": "^2.8.7"
+    }
+}
