@@ -4,25 +4,139 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MoonQuest Admin</title>
+    <title>MoonBase Admin</title>
+    <script src="./vue.min.js"></script>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            font-size: 20px;
+            line-height: 1.5;
+            background-color: #000;
+            color: #fff;
+        }
+
+        ul>li>span {
+            display: inline-block;
+            width: 200px;
+        }
+
+        .positive {
+            color: #8f8;
+        }
+
+        .positive::before {
+            content: '+';
+        }
+
+        .negative {
+            color: #f88;
+        }
+    </style>
 </head>
 
 <body>
     <div id="app">
-        <h1>MoonQuest Admin</h1>
+        <h1>MoonBase Admin</h1>
 
-        <h2>Current resources</h2>
-        <p>TODO</p>
-        <p>Inc resource</p>
-        <p>Dec resource</p>
+        <h2>Players</h2>
+        <ul>
+            <li v-for="player in players"
+                :style="{ backgroundColor: `rgb(${player.color.red}, ${player.color.green}, ${player.color.blue}, 0.25)` }">
+                <span
+                    :style="{ fontWeight: 'bold', color: `rgb(${player.color.red}, ${player.color.green}, ${player.color.blue})` }">
+                    {{ player.name }}
+                </span>
+                <span>🪨 {{ player.moonstone.toFixed(0) }} <span
+                        :class="{ positive: player.moonstoneInc >= 0, negative: player.moonstoneInc < 0}">{{
+                        player.moonstoneInc.toFixed(0) }}</span></span>
+                <span>⚡ {{ player.energy.toFixed(0) }} <span
+                        :class="{ positive: player.energyInc >= 0, negative: player.energyInc < 0}">{{
+                        player.energyInc.toFixed(0) }}</span></span>
+                <span>🥩 {{ player.food.toFixed(0) }} <span
+                        :class="{ positive: player.foodInc >= 0, negative: player.foodInc < 0}">{{
+                        player.foodInc.toFixed(0) }}</span></span>
+                <span>💧 {{ player.water.toFixed(0) }} <span
+                        :class="{ positive: player.waterInc >= 0, negative: player.waterInc < 0}">{{
+                        player.waterInc.toFixed(0) }}</span></span>
+                <span>☁️ {{ player.oxygen.toFixed(0) }} <span
+                        :class="{ positive: player.oxygenInc >= 0, negative: player.oxygenInc < 0}">{{
+                        player.oxygenInc.toFixed(0) }}</span></span>
+                <span>🏠 {{ player.housingUsed.toFixed(0) }} / {{ player.housing.toFixed(0) }}</span>
+            </li>
+        </ul>
+
+        <h2>Resources</h2>
+        TODO
 
         <h2>Units</h2>
-        <p>TODO</p>
-        <p>Buy unit</p>
-        <p>Sell unit</p>
-        <p>Destroy unit</p>
     </div>
 
+    <script>
+        const MessageType = {
+            PLAYERS_UPDATE: 0x00
+        };
+
+        const app = new Vue({
+            el: '#app',
+            data: {
+                players: []
+            },
+
+            created() {
+                const ws = new WebSocket('ws://localhost:8080/');
+                ws.binaryType = 'arraybuffer';
+                ws.onmessage = (event) => {
+                    this.onMessage(event.data);
+                };
+            },
+
+            methods: {
+                onMessage(message) {
+                    let pos = 0;
+                    const view = new DataView(message);
+                    const type = view.getUint8(pos++);
+
+                    if (type == MessageType.PLAYERS_UPDATE) {
+                        const decoder = new TextDecoder();
+                        const playersCount = view.getUint8(pos++);
+                        for (let i = 0; i < playersCount; i++) {
+                            const playerId = view.getUint8(pos++);
+                            let player = this.players.find(player => player.id == playerId);
+                            if (player == null) {
+                                player = {
+                                    id: playerId, name: '', color: { red: 0, green: 0, blue: 0, },
+                                    moonstone: 0, moonstoneInc: 0, food: 0, foodInc: 0, water: 0, waterInc: 0,
+                                    oxygen: 0, oxygenInc: 0, housingUsed: 0, housing: 0
+                                };
+                                this.players.push(player);
+                            }
+
+                            const nameLength = view.getUint16(pos, true); pos += 2;
+                            player.name = decoder.decode(new Uint8Array(message, pos, nameLength)); pos += nameLength;
+                            player.color = {
+                                red: view.getUint8(pos++),
+                                green: view.getUint8(pos++),
+                                blue: view.getUint8(pos++),
+                            };
+
+                            player.moonstone = view.getFloat32(pos, true); pos += 4;
+                            player.moonstoneInc = view.getFloat32(pos, true); pos += 4;
+                            player.energy = view.getFloat32(pos, true); pos += 4;
+                            player.energyInc = view.getFloat32(pos, true); pos += 4;
+                            player.food = view.getFloat32(pos, true); pos += 4;
+                            player.foodInc = view.getFloat32(pos, true); pos += 4;
+                            player.water = view.getFloat32(pos, true); pos += 4;
+                            player.waterInc = view.getFloat32(pos, true); pos += 4;
+                            player.oxygen = view.getFloat32(pos, true); pos += 4;
+                            player.oxygenInc = view.getFloat32(pos, true); pos += 4;
+                            player.housingUsed = view.getFloat32(pos, true); pos += 4;
+                            player.housing = view.getFloat32(pos, true); pos += 4;
+                        }
+                    }
+                }
+            }
+        });
+    </script>
 </body>
 
 </html>

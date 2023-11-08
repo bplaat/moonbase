@@ -1,6 +1,6 @@
 {
     "type": "module",
-    "name": "moonquest",
+    "name": "moonbase",
     "version": "0.1.0",
     "description": "A resource counters thing for a Welpen camp",
     "license": "MIT",

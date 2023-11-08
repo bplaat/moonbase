@@ -4,12 +4,21 @@
  * SPDX-License-Identifier: MIT
  */
 
-export default class Unit {
-    constructor() {
+import { readFile } from 'fs/promises';
+import unitTypes from '../units.json' with { type: 'json' };
 
+export default class Unit {
+    constructor(typeId) {
+        this.typeId = typeId;
     }
 
-    update() {
+    static fromJson(jsonUnit) {
+        return new Unit(jsonUnit.typeId);
+    }
 
+    toJson() {
+        return { typeId: this.typeId };
     }
 }
+
+export { unitTypes };

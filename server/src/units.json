@@ -1,11 +1,11 @@
 [
     {
         "id": 0,
-        "name": "Center Module",
+        "name": "Command Center",
         "price": {},
-        "effect": {
+        "inc": {
             "moonstone": 10,
-            "energy": 20,
+            "energy": 25,
             "food": 10,
             "water": 10,
             "oxygen": 10,
@@ -18,8 +18,9 @@
         "price": {
             "moonstone": 50
         },
-        "effect": {
-            "housing": 5
+        "inc": {
+            "housing": 5,
+            "energy": -5
         }
     },
     {
@@ -28,8 +29,99 @@
         "price": {
             "moonstone": 250
         },
-        "effect": {
-            "housing": 20
+        "inc": {
+            "housing": 20,
+            "energy": -5
+        }
+    },
+    {
+        "id": 3,
+        "name": "Basic miner",
+        "price": {
+            "food": 50,
+            "oxygen": 50
+        },
+        "inc": {
+            "moonstone": 10
+        }
+    },
+    {
+        "id": 4,
+        "name": "Mega miner",
+        "price": {
+            "food": 200,
+            "oxygen": 200
+        },
+        "inc": {
+            "moonstone": 50
+        }
+    },
+    {
+        "id": 5,
+        "name": "Solar panel",
+        "price": {
+            "moonstone": 100
+        },
+        "inc": {
+            "energy": 10
+        }
+    },
+    {
+        "id": 6,
+        "name": "Nuclear reactor",
+        "price": {
+            "moonstone": 250
+        },
+        "inc": {
+            "energy": 20
+        }
+    },
+    {
+        "id": 7,
+        "name": "Farm",
+        "price": {
+            "moonstone": 100,
+            "oxygen": 25,
+            "water": 25
+        },
+        "inc": {
+            "food": 10,
+            "energy": -2
+        }
+    },
+    {
+        "id": 8,
+        "name": "Animal factory",
+        "price": {
+            "moonstone": 250,
+            "oxygen": 50,
+            "water": 50
+        },
+        "inc": {
+            "food": 25,
+            "energy": -5
+        }
+    },
+    {
+        "id": 9,
+        "name": "Water filter",
+        "price": {
+            "moonstone": 100
+        },
+        "inc": {
+            "water": 10,
+            "energy": -2
+        }
+    },
+    {
+        "id": 10,
+        "name": "Oxygen filter",
+        "price": {
+            "moonstone": 100
+        },
+        "inc": {
+            "oxygen": 10,
+            "energy": -2
         }
     }
 ]

@@ -4,8 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MoonQuest</title>
-    <script src="vue.min.js"></script>
+    <title>MoonBase</title>
+    <script src="./vue.min.js"></script>
     <style>
         html,
         body,
@@ -60,7 +60,8 @@
 <body>
     <div id="app">
         <ul>
-            <li v-for="player in players">
+            <li v-for="player in players"
+                :style="{ backgroundColor: `rgb(${player.color.red}, ${player.color.green}, ${player.color.blue}, 0.25)` }">
                 <span
                     :style="{ fontWeight: 'bold', color: `rgb(${player.color.red}, ${player.color.green}, ${player.color.blue})` }">
                     {{ player.name }}
@@ -80,7 +81,7 @@
                 <span>☁️ {{ player.oxygen.toFixed(0) }} <span
                         :class="{ positive: player.oxygenInc >= 0, negative: player.oxygenInc < 0}">{{
                         player.oxygenInc.toFixed(0) }}</span></span>
-                <span>🏠 {{ player.housingUsed }} / {{ player.housing }}</span>
+                <span>🏠 {{ player.housingUsed.toFixed(0) }} / {{ player.housing.toFixed(0) }}</span>
             </li>
         </ul>
     </div>
@@ -117,9 +118,14 @@
                             const playerId = view.getUint8(pos++);
                             let player = this.players.find(player => player.id == playerId);
                             if (player == null) {
-                                player = { id: playerId, name: '', color: { red: 0, green: 0, blue: 0, }, moonstone: 0, moonstoneInc: 0, food: 0, foodInc: 0, water: 0, waterInc: 0, oxygen: 0, oxygenInc: 0, housingUsed: 0, housing: 0 };
+                                player = {
+                                    id: playerId, name: '', color: { red: 0, green: 0, blue: 0, },
+                                    moonstone: 0, moonstoneInc: 0, food: 0, foodInc: 0, water: 0, waterInc: 0,
+                                    oxygen: 0, oxygenInc: 0, housingUsed: 0, housing: 0
+                                };
                                 this.players.push(player);
                             }
+
                             const nameLength = view.getUint16(pos, true); pos += 2;
                             player.name = decoder.decode(new Uint8Array(message, pos, nameLength)); pos += nameLength;
                             player.color = {
@@ -138,8 +144,8 @@
                             player.waterInc = view.getFloat32(pos, true); pos += 4;
                             player.oxygen = view.getFloat32(pos, true); pos += 4;
                             player.oxygenInc = view.getFloat32(pos, true); pos += 4;
-                            player.housingUsed = view.getUint32(pos, true); pos += 4;
-                            player.housing = view.getUint32(pos, true); pos += 4;
+                            player.housingUsed = view.getFloat32(pos, true); pos += 4;
+                            player.housing = view.getFloat32(pos, true); pos += 4;
                         }
                     }
                 }
