@@ -15,7 +15,7 @@
             color: #fff;
         }
 
-        ul>li>span {
+        .column {
             display: inline-block;
             width: 200px;
         }
@@ -38,34 +38,35 @@
     <div id="app">
         <h1>MoonBase Admin</h1>
 
-        <h2>Players</h2>
+        <h2>Players Resources</h2>
         <ul>
             <li v-for="player in players" :key="player.id"
                 :style="{ backgroundColor: `rgb(${player.color.red}, ${player.color.green}, ${player.color.blue}, 0.25)` }">
-                <span
+                <span class="column"
                     :style="{ fontWeight: 'bold', color: `rgb(${player.color.red}, ${player.color.green}, ${player.color.blue})` }">
                     {{ player.name }}
                 </span>
-                <span>🪨 {{ player.moonstone.toFixed(0) }} <span
-                        :class="{ positive: player.moonstoneInc >= 0, negative: player.moonstoneInc < 0}">{{
+                <span class="column">🪨 {{ player.moonstone.toFixed(0) }}
+                    <span :class="{ positive: player.moonstoneInc >= 0, negative: player.moonstoneInc < 0}">{{
                         player.moonstoneInc.toFixed(0) }}</span></span>
-                <span>⚡ {{ player.energy.toFixed(0) }} <span
-                        :class="{ positive: player.energyInc >= 0, negative: player.energyInc < 0}">{{
-                        player.energyInc.toFixed(0) }}</span></span>
-                <span>🥩 {{ player.food.toFixed(0) }} <span
-                        :class="{ positive: player.foodInc >= 0, negative: player.foodInc < 0}">{{
+                <span class="column">⚡ {{ player.energy.toFixed(0) }}
+                    <span :class="{ positive: player.energyInc >= 0, negative: player.energyInc < 0}">{{
+                        player.energyInc.toFixed(0) }}</span>
+                </span>
+                <span class="column">🥩 {{ player.food.toFixed(0) }}
+                    <span :class="{ positive: player.foodInc >= 0, negative: player.foodInc < 0}">{{
                         player.foodInc.toFixed(0) }}</span></span>
-                <span>💧 {{ player.water.toFixed(0) }} <span
-                        :class="{ positive: player.waterInc >= 0, negative: player.waterInc < 0}">{{
+                <span class="column">💧 {{ player.water.toFixed(0) }}
+                    <span :class="{ positive: player.waterInc >= 0, negative: player.waterInc < 0}">{{
                         player.waterInc.toFixed(0) }}</span></span>
-                <span>☁️ {{ player.oxygen.toFixed(0) }} <span
-                        :class="{ positive: player.oxygenInc >= 0, negative: player.oxygenInc < 0}">{{
+                <span class="column">☁️ {{ player.oxygen.toFixed(0) }}
+                    <span :class="{ positive: player.oxygenInc >= 0, negative: player.oxygenInc < 0}">{{
                         player.oxygenInc.toFixed(0) }}</span></span>
-                <span>🏠 {{ player.housingUsed.toFixed(0) }} / {{ player.housing.toFixed(0) }}</span>
+                <span class="column">🏠 {{ player.housingUsed.toFixed(0) }} / {{ player.housing.toFixed(0) }}</span>
             </li>
         </ul>
 
-        <h2>Resources</h2>
+        <h3>Modify Resources</h3>
         <form @submit.prevent="resourcesFormSubmit">
             <select v-model="resourcesForm.playerId">
                 <option value="null" disabled>Choose a player:</option>
@@ -79,17 +80,58 @@
             <button type="submit">Modify</button>
         </form>
 
-        <h2>Units</h2>
-        <p>Units per player</p>
+        <h2>Players Units</h2>
+        <ul>
+            <li v-for="player in players" :key="player.id"
+                :style="{ backgroundColor: `rgb(${player.color.red}, ${player.color.green}, ${player.color.blue}, 0.25)` }">
+                <span class="column"
+                    :style="{ fontWeight: 'bold', color: `rgb(${player.color.red}, ${player.color.green}, ${player.color.blue})` }">
+                    {{ player.name }}
+                </span>
 
-        <form>
-            Buy unit
+                <ul style="font-size: 75%;">
+                    <li v-for="unit in player.units">{{ unitTypes[unit.typeId].name }}</li>
+                </ul>
+            </li>
+        </ul>
+
+        <h3>Buy Unit</h3>
+        <form @submit.prevent="unitBuyFormSubmit">
+            <select v-model="unitBuyForm.playerId">
+                <option value="null" disabled>Choose a player:</option>
+                <option v-for="player in players" :key="player.id" :value="player.id">{{ player.name }}</option>
+            </select>
+            <select v-model="unitBuyForm.unitTypeId">
+                <option value="null" disabled>Choose a unit type:</option>
+                <option v-for="unitType, id in unitTypes" :key="id" :value="id">{{ unitType.name }}</option>
+            </select>
+            <button type="submit">Buy</button>
         </form>
-        <form>
-            Sell unit
+
+        <h3>Sell Unit</h3>
+        <form @submit.prevent="unitSellFormSubmit">
+            <select v-model="unitSellForm.playerId">
+                <option value="null" disabled>Choose a player:</option>
+                <option v-for="player in players" :key="player.id" :value="player.id">{{ player.name }}</option>
+            </select>
+            <select v-model="unitSellForm.unitTypeId">
+                <option value="null" disabled>Choose a unit type:</option>
+                <option v-for="unitType, id in unitTypes" :key="id" :value="id">{{ unitType.name }}</option>
+            </select>
+            <button type="submit">Sell</button>
         </form>
-        <form>
-            Destroy unit
+
+        <h3>Destroy Unit</h3>
+        <form @submit.prevent="unitDestroyFormSubmit">
+            <select v-model="unitDestroyForm.playerId">
+                <option value="null" disabled>Choose a player:</option>
+                <option v-for="player in players" :key="player.id" :value="player.id">{{ player.name }}</option>
+            </select>
+            <select v-model="unitDestroyForm.unitTypeId">
+                <option value="null" disabled>Choose a unit type:</option>
+                <option v-for="unitType, id in unitTypes" :key="id" :value="id">{{ unitType.name }}</option>
+            </select>
+            <button type="submit">Destroy</button>
         </form>
     </div>
 
@@ -100,6 +142,7 @@
             UNIT_BUY: 0x10,
             UNIT_SELL: 0x11,
             UNIT_DESTROY: 0x12,
+            UNIT_TYPES_JSON: 0x20,
         };
 
         let ws;
@@ -107,6 +150,7 @@
             el: '#app',
             data: {
                 players: [],
+                unitTypes: {},
                 resourcesForm: {
                     playerId: null,
                     moonstone: 0,
@@ -114,6 +158,18 @@
                     food: 0,
                     water: 0,
                     oxygen: 0
+                },
+                unitBuyForm: {
+                    playerId: null,
+                    unitTypeId: null,
+                },
+                unitSellForm: {
+                    playerId: null,
+                    unitTypeId: null,
+                },
+                unitDestroyForm: {
+                    playerId: null,
+                    unitTypeId: null,
                 }
             },
 
@@ -149,10 +205,66 @@
                     this.resourcesForm.oxygen = 0;
                 },
 
+                unitBuyFormSubmit() {
+                    if (this.unitBuyForm.playerId == null) return;
+                    if (this.unitBuyForm.unitTypeId == null) return;
+
+                    const message = new ArrayBuffer(1 + 1 + 1);
+                    let pos = 0;
+                    const view = new DataView(message);
+                    view.setUint8(pos++, MessageType.UNIT_BUY);
+                    view.setUint8(pos++, this.unitBuyForm.playerId);
+                    view.setUint8(pos++, this.unitBuyForm.unitTypeId);
+                    ws.send(message);
+
+                    this.unitBuyForm.playerId = null;
+                    this.unitBuyForm.unitTypeId = null;
+                },
+
+                unitSellFormSubmit() {
+                    if (this.unitSellForm.playerId == null) return;
+                    if (this.unitSellForm.unitTypeId == null) return;
+
+                    const message = new ArrayBuffer(1 + 1 + 1);
+                    let pos = 0;
+                    const view = new DataView(message);
+                    view.setUint8(pos++, MessageType.UNIT_SELL);
+                    view.setUint8(pos++, this.unitSellForm.playerId);
+                    view.setUint8(pos++, this.unitSellForm.unitTypeId);
+                    ws.send(message);
+
+                    this.unitSellForm.playerId = null;
+                    this.unitSellForm.unitTypeId = null;
+                },
+
+                unitDestroyFormSubmit() {
+                    if (this.unitDestroyForm.playerId == null) return;
+                    if (this.unitDestroyForm.unitTypeId == null) return;
+
+                    const message = new ArrayBuffer(1 + 1 + 1);
+                    let pos = 0;
+                    const view = new DataView(message);
+                    view.setUint8(pos++, MessageType.UNIT_DESTROY);
+                    view.setUint8(pos++, this.unitDestroyForm.playerId);
+                    view.setUint8(pos++, this.unitDestroyForm.unitTypeId);
+                    ws.send(message);
+
+                    this.unitDestroyForm.playerId = null;
+                    this.unitDestroyForm.unitTypeId = null;
+                },
+
                 onMessage(message) {
                     const view = new DataView(message);
                     let pos = 0;
                     const type = view.getUint8(pos++);
+
+                    if (type == MessageType.UNIT_TYPES_JSON) {
+                        const decoder = new TextDecoder();
+                        const unitTypes = JSON.parse(decoder.decode(new Uint8Array(message, pos, message.byteLength - 1))); pos += message.byteLength - 1;
+                        for (const unitType of unitTypes) {
+                            this.unitTypes[unitType.id] = unitType;
+                        }
+                    }
 
                     if (type == MessageType.PLAYER_UPDATE) {
                         const playerId = view.getUint8(pos++);
@@ -161,7 +273,7 @@
                             player = {
                                 id: playerId, name: '', color: { red: 0, green: 0, blue: 0, },
                                 moonstone: 0, moonstoneInc: 0, food: 0, foodInc: 0, water: 0, waterInc: 0,
-                                oxygen: 0, oxygenInc: 0, housingUsed: 0, housing: 0
+                                oxygen: 0, oxygenInc: 0, housingUsed: 0, housing: 0, units: {}
                             };
                             this.players.push(player);
                         }
@@ -187,6 +299,12 @@
                         player.oxygenInc = view.getFloat32(pos, true); pos += 4;
                         player.housingUsed = view.getFloat32(pos, true); pos += 4;
                         player.housing = view.getFloat32(pos, true); pos += 4;
+
+                        const unitsLength = view.getUint16(pos, true); pos += 2;
+                        player.units = [];
+                        for (let i = 0; i < unitsLength; i++) {
+                            player.units.push({ typeId: view.getUint8(pos++) });
+                        }
                     }
                 }
             }

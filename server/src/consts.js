@@ -12,6 +12,7 @@ const MessageType = {
     UNIT_BUY: 0x10,
     UNIT_SELL: 0x11,
     UNIT_DESTROY: 0x12,
+    UNIT_TYPES_JSON: 0x20,
 };
 
 export { SERVER_PORT, MessageType };

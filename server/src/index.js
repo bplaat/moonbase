@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: MIT
  */
 
+import { readFile } from 'fs/promises';
 import { WebSocketServer } from 'ws';
 import { MessageType } from './consts.js';
 import World from './game/World.js';
@@ -61,8 +62,20 @@ function broadcastPlayerUpdate(player) {
 
 const wss = new WebSocketServer({ port: 8080 });
 log.info('Websocket server is listening on: ws://localhost:8080/');
-wss.on('connection', ws => {
+wss.on('connection', async (ws) => {
     clients.push(ws);
+
+    // Send unit types json
+    const unitTypesJson = await readFile('src/units.json', { encoding: 'utf-8' });
+    const message = new ArrayBuffer(1 + unitTypesJson.length);
+    const view = new DataView(message);
+    let pos = 0;
+    view.setUint8(pos++, MessageType.UNIT_TYPES_JSON);
+    for (let j = 0; j < unitTypesJson.length; j++) {
+        view.setUint8(pos++, unitTypesJson.charCodeAt(j));
+    }
+    ws.send(message);
+
     ws.on('message', (message) => {
         const data = new Uint8Array(message.byteLength);
         message.copy(data, 0);
