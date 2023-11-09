@@ -5,7 +5,8 @@
  */
 
 import { readFile } from 'fs/promises';
-import unitTypes from '../units.json' with { type: 'json' };
+
+const unitTypes = JSON.parse(await readFile('src/units.json', { encoding: 'utf-8' }));
 
 export default class Unit {
     constructor(typeId) {
@@ -14,6 +15,10 @@ export default class Unit {
 
     static fromJson(jsonUnit) {
         return new Unit(jsonUnit.typeId);
+    }
+
+    get unitType() {
+        return unitTypes.find(unitType => unitType.id === this.typeId);
     }
 
     toJson() {

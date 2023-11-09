@@ -7,6 +7,7 @@
 import { WebSocketServer } from 'ws';
 import { MessageType } from './consts.js';
 import World from './game/World.js';
+import Unit, { unitTypes } from './game/Unit.js';
 import log from './log.js';
 import { exists } from './utils.js';
 
@@ -24,79 +25,116 @@ function broadcast(message) {
     }
 }
 
-function broadcastPlayersUpdate() {
-    let messageLength = 1 + 1;
-    for (const player of world.players) {
-        messageLength += 1 + 2 + player.name.length + 3 + 4 * 12;
-    }
-    const message = new ArrayBuffer(messageLength);
-    let pos = 0;
+function broadcastPlayerUpdate(player) {
+    const message = new ArrayBuffer(1 + 1 + 2 + player.name.length + 3 + 12 * 4 + 2 + player.units.length);
     const view = new DataView(message);
-    view.setUint8(pos++, MessageType.PLAYERS_UPDATE);
-    view.setUint8(pos++, world.players.length);
-    for (const player of world.players) {
-        view.setUint8(pos++, player.id);
-        view.setUint16(pos, player.name.length, true); pos += 2;
-        for (let j = 0; j < player.name.length; j++) {
-            view.setUint8(pos++, player.name.charCodeAt(j));
-        }
-        view.setUint8(pos++, player.color.red);
-        view.setUint8(pos++, player.color.green);
-        view.setUint8(pos++, player.color.blue);
+    let pos = 0;
+    view.setUint8(pos++, MessageType.PLAYER_UPDATE);
+    view.setUint8(pos++, player.id);
+    view.setUint16(pos, player.name.length, true); pos += 2;
+    for (let j = 0; j < player.name.length; j++) {
+        view.setUint8(pos++, player.name.charCodeAt(j));
+    }
+    view.setUint8(pos++, player.color.red);
+    view.setUint8(pos++, player.color.green);
+    view.setUint8(pos++, player.color.blue);
 
-        view.setFloat32(pos, player.moonstone, true); pos += 4;
-        view.setFloat32(pos, player.moonstoneInc, true); pos += 4;
-        view.setFloat32(pos, player.energy, true); pos += 4;
-        view.setFloat32(pos, player.energyInc, true); pos += 4;
-        view.setFloat32(pos, player.food, true); pos += 4;
-        view.setFloat32(pos, player.foodInc, true); pos += 4;
-        view.setFloat32(pos, player.water, true); pos += 4;
-        view.setFloat32(pos, player.waterInc, true); pos += 4;
-        view.setFloat32(pos, player.oxygen, true); pos += 4;
-        view.setFloat32(pos, player.oxygenInc, true); pos += 4;
-        view.setFloat32(pos, player.housingUsed, true); pos += 4;
-        view.setFloat32(pos, player.housing, true); pos += 4;
+    view.setFloat32(pos, player.moonstone, true); pos += 4;
+    view.setFloat32(pos, player.moonstoneInc, true); pos += 4;
+    view.setFloat32(pos, player.energy, true); pos += 4;
+    view.setFloat32(pos, player.energyInc, true); pos += 4;
+    view.setFloat32(pos, player.food, true); pos += 4;
+    view.setFloat32(pos, player.foodInc, true); pos += 4;
+    view.setFloat32(pos, player.water, true); pos += 4;
+    view.setFloat32(pos, player.waterInc, true); pos += 4;
+    view.setFloat32(pos, player.oxygen, true); pos += 4;
+    view.setFloat32(pos, player.oxygenInc, true); pos += 4;
+    view.setFloat32(pos, player.housingUsed, true); pos += 4;
+    view.setFloat32(pos, player.housing, true); pos += 4;
+
+    view.setUint16(pos, player.units.length, true); pos += 2;
+    for (const unit of player.units) {
+        view.setUint8(pos++, unit.typeId);
     }
     broadcast(message);
 }
 
 const wss = new WebSocketServer({ port: 8080 });
+log.info('Websocket server is listening on: ws://localhost:8080/');
 wss.on('connection', ws => {
     clients.push(ws);
     ws.on('message', (message) => {
+        const data = new Uint8Array(message.byteLength);
+        message.copy(data, 0);
+        const view = new DataView(data.buffer);
         let pos = 0;
-        const view = new DataView(message);
         const type = view.getUint8(pos++);
 
-        // if (type == MessageType.PLAYER_INC) {
-        //     const playerId = view.getUint8(pos++);
-        //     const resourceId = view.getUint8(pos++);
-        //     const change = view.getFloat32(pos); pos += 4;
-        // }
-        // if (type == MessageType.PLAYER_DEC) {
-        //     const playerId = view.getUint8(pos++);
-        //     const resourceId = view.getUint8(pos++);
-        //     const change = view.getFloat32(pos); pos += 4;
-        // }
+        if (type === MessageType.PLAYER_MODIFY) {
+            const playerId = view.getUint8(pos++);
+            const player = world.players.find(player => player.id === playerId);
+            player.moonstone = Math.max(player.moonstone + view.getFloat32(pos, true), 0); pos += 4;
+            player.energy = Math.max(player.energy + view.getFloat32(pos, true), 0); pos += 4;
+            player.food = Math.max(player.food + view.getFloat32(pos, true), 0); pos += 4;
+            player.water = Math.max(player.water + view.getFloat32(pos, true), 0); pos += 4;
+            player.oxygen = Math.max(player.oxygen + view.getFloat32(pos, true), 0); pos += 4;
+            world.save('data.json');
+        }
 
-        // if (type == MessageType.UNIT_BUY) {
-        //     const playerId = view.getUint8(pos++);
-        //     const unitId = view.getUint8(pos++);
-        //     const amount = view.getUint8(pos++);
-        // }
+        if (type === MessageType.UNIT_BUY) {
+            const playerId = view.getUint8(pos++);
+            const player = world.players.find(player => player.id === playerId);
+            const unitTypeId = view.getUint8(pos++);
+            const unitType = unitTypes.find(unitType => unitType.id === unitTypeId);
+            if (
+                player.moonstone >= (unitType.price.moonstone || 0) &&
+                player.energy >= (unitType.price.moonstone || 0) &&
+                player.food >= (unitType.price.food || 0) &&
+                player.water >= (unitType.price.water || 0) &&
+                player.oxygen >= (unitType.price.oxygen || 0) &&
+                player.housing - player.housingUsed >= (unitType.inc.housingUsed || 0)
+            ) {
+                player.moonstone -= unitType.price.moonstone || 0;
+                player.energy -= unitType.price.energy || 0;
+                player.food -= unitType.price.food || 0;
+                player.water -= unitType.price.water || 0;
+                player.oxygen -= unitType.price.oxygen || 0;
 
-        // if (type === MessageType.UNIT_SELL) {
-        //     const playerId = view.getUint8(pos++);
-        //     const unitId = view.getUint8(pos++);
-        //     const amount = view.getUint8(pos++);
-        // }
+                player.units.push(new Unit(unitTypeId));
+                player.calcInc();
+                world.save('data.json');
+            }
+        }
 
-        // if (type === MessageType.UNIT_DESTROY) {
-        //     const playerId = view.getUint8(pos++);
-        //     const unitId = view.getUint8(pos++);
-        //     const amount = view.getUint8(pos++);
-        // }
+        if (type === MessageType.UNIT_SELL) {
+            const playerId = view.getUint8(pos++);
+            const player = world.players.find(player => player.id === playerId);
+            const unitTypeId = view.getUint8(pos++);
+            const unit = player.units.find(unit => unit.typeId === unitTypeId);
+            if (unit !== null) {
+                player.moonstone += (unit.unitType.price.moonstone || 0) / 2;
+                player.energy += (unit.unitType.price.energy || 0) / 2;
+                player.food += (unit.unitType.price.food || 0) / 2;
+                player.water += (unit.unitType.price.water || 0) / 2;
+                player.oxygen += (unit.unitType.price.oxygen || 0) / 2;
 
+                player.units.splice(player.units.indexOf(unit), 1);
+                player.calcInc();
+                world.save('data.json');
+            }
+        }
+
+        if (type === MessageType.UNIT_DESTROY) {
+            const playerId = view.getUint8(pos++);
+            const player = world.players.find(player => player.id === playerId);
+            const unitTypeId = view.getUint8(pos++);
+            const unit = player.units.find(unit => unit.typeId === unitTypeId);
+            if (unit !== null) {
+                player.units.splice(player.units.indexOf(unit), 1);
+                player.calcInc();
+                world.save('data.json');
+            }
+        }
     });
     ws.on('error', log.error);
     ws.on('close', () => {
@@ -117,7 +155,9 @@ function update() {
         world.save('data.json');
     }
 
-    broadcastPlayersUpdate();
+    for (const player of world.players) {
+        broadcastPlayerUpdate(player);
+    }
 
     setTimeout(update, 250);
 }

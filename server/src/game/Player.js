@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import Unit, { unitTypes } from './Unit.js';
+import Unit from './Unit.js';
 
 export default class Player {
     constructor(id, name, color) {
@@ -69,30 +69,23 @@ export default class Player {
         this.housing = 0;
 
         for (const unit of this.units) {
-            const unitType = unitTypes.find((unitType) => unitType.id === unit.typeId);
-            if ('moonstone' in unitType.inc) this.moonstoneInc += unitType.inc.moonstone;
-            if ('energy' in unitType.inc) this.energyInc += unitType.inc.energy;
-            if ('food' in unitType.inc) this.foodInc += unitType.inc.food;
-            if ('water' in unitType.inc) this.waterInc += unitType.inc.water;
-            if ('oxygen' in unitType.inc) this.oxygenInc += unitType.inc.oxygen;
-            if ('housingUsed' in unitType.inc) this.housingUsed += unitType.inc.housingUsed;
-            if ('housing' in unitType.inc) this.housing += unitType.inc.housing;
+            if ('moonstone' in unit.unitType.inc) this.moonstoneInc += unit.unitType.inc.moonstone;
+            if ('energy' in unit.unitType.inc) this.energyInc += unit.unitType.inc.energy;
+            if ('food' in unit.unitType.inc) this.foodInc += unit.unitType.inc.food;
+            if ('water' in unit.unitType.inc) this.waterInc += unit.unitType.inc.water;
+            if ('oxygen' in unit.unitType.inc) this.oxygenInc += unit.unitType.inc.oxygen;
+            if ('housingUsed' in unit.unitType.inc) this.housingUsed += unit.unitType.inc.housingUsed;
+            if ('housing' in unit.unitType.inc) this.housing += unit.unitType.inc.housing;
         }
     }
 
     update(delta) {
-        this.energy += (this.energyInc / 60) * delta;
-        if (this.energy < 0) this.energy = 0;
-
+        this.energy = Math.max(this.energy + (this.energyInc / 60) * delta, 0);
         if (this.energy > 0) {
-            this.moonstone += (this.moonstoneInc / 60) * delta;
-            if (this.moonstone < 0) this.moonstone = 0;
-            this.food += (this.foodInc / 60) * delta;
-            if (this.food < 0) this.food = 0;
-            this.water += (this.waterInc / 60) * delta;
-            if (this.water < 0) this.water = 0;
-            this.oxygen += (this.oxygenInc / 60) * delta;
-            if (this.oxygen < 0) this.oxygen = 0;
+            this.moonstone = Math.max(this.moonstone + (this.moonstoneInc / 60) * delta, 0);
+            this.food = Math.max(this.food + (this.foodInc / 60) * delta, 0);
+            this.water = Math.max(this.water + (this.waterInc / 60) * delta, 0);
+            this.oxygen = Math.max(this.oxygen + (this.oxygenInc / 60) * delta, 0);
         }
     }
 }
