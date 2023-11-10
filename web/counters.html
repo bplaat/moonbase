@@ -62,26 +62,33 @@
         <ul>
             <li v-for="player in players" :key="player.id"
                 :style="{ backgroundColor: `rgb(${player.color.red}, ${player.color.green}, ${player.color.blue}, 0.25)` }">
-                <span class="column"
+                <div class="column"
                     :style="{ fontWeight: 'bold', color: `rgb(${player.color.red}, ${player.color.green}, ${player.color.blue})` }">
                     {{ player.name }}
-                </span>
-                <span class="column">🪨 {{ player.moonstone.toFixed(0) }}
-                    <span :class="{ positive: player.moonstoneInc >= 0, negative: player.moonstoneInc < 0}">{{
-                        player.moonstoneInc.toFixed(0) }}</span></span>
-                <span class="column">⚡ {{ player.energy.toFixed(0) }}
-                    <span :class="{ positive: player.energyInc >= 0, negative: player.energyInc < 0}">{{
-                        player.energyInc.toFixed(0) }}</span></span>
-                <span class="column">🥩 {{ player.food.toFixed(0) }}
-                    <span :class="{ positive: player.foodInc >= 0, negative: player.foodInc < 0}">{{
-                        player.foodInc.toFixed(0) }}</span></span>
-                <span class="column">💧 {{ player.water.toFixed(0) }}
-                    <span :class="{  positive: player.waterInc >= 0, negative: player.waterInc < 0}">{{
-                        player.waterInc.toFixed(0) }}</span></span>
-                <span class="column">☁️ {{ player.oxygen.toFixed(0) }}
-                    <span :class="{ positive: player.oxygenInc >= 0, negative: player.oxygenInc < 0}">{{
-                        player.oxygenInc.toFixed(0) }}</span></span>
-                <span class="column">🏠 {{ player.housingUsed.toFixed(0) }} / {{ player.housing.toFixed(0) }}</span>
+                </div>
+                <div style="flex: 3;">
+                    <div style="display: flex;">
+                        <div class="column">🪨 {{ player.moonstone.toFixed(0) }}
+                            <span :class="{ positive: player.moonstoneInc >= 0, negative: player.moonstoneInc < 0}">{{
+                                player.moonstoneInc.toFixed(0) }}</span></div>
+                        <div class="column">⚡ {{ player.energy.toFixed(0) }}
+                            <span :class="{ positive: player.energyInc >= 0, negative: player.energyInc < 0}">{{
+                                player.energyInc.toFixed(0) }}</span></div>
+                        <div class="column">🥩 {{ player.food.toFixed(0) }}
+                            <span :class="{ positive: player.foodInc >= 0, negative: player.foodInc < 0}">{{
+                                player.foodInc.toFixed(0) }}</span></div>
+                    </div>
+                    <div style="display: flex;">
+                        <div class="column">💧 {{ player.water.toFixed(0) }}
+                            <span :class="{  positive: player.waterInc >= 0, negative: player.waterInc < 0}">{{
+                                player.waterInc.toFixed(0) }}</span></div>
+                        <div class="column">☁️ {{ player.oxygen.toFixed(0) }}
+                            <span :class="{ positive: player.oxygenInc >= 0, negative: player.oxygenInc < 0}">{{
+                                player.oxygenInc.toFixed(0) }}</span></div>
+                        <div class="column">🏠 {{ player.housingUsed.toFixed(0) }} / {{ player.housing.toFixed(0)
+                            }}</div>
+                    </div>
+                </div>
             </li>
         </ul>
     </div>
