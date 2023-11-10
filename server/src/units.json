@@ -1,7 +1,7 @@
 [
     {
         "id": 0,
-        "name": "Command Center",
+        "name": "Commando Centrum",
         "price": {},
         "inc": {
             "moonstone": 10,
@@ -14,7 +14,7 @@
     },
     {
         "id": 1,
-        "name": "House Module",
+        "name": "Huis module",
         "price": {
             "moonstone": 50,
             "oxygen": 25
@@ -26,7 +26,7 @@
     },
     {
         "id": 2,
-        "name": "People Center",
+        "name": "Mensen Centrum",
         "price": {
             "moonstone": 250
         },
@@ -37,7 +37,7 @@
     },
     {
         "id": 3,
-        "name": "Basic miner",
+        "name": "Simpele Miner",
         "price": {
             "food": 50,
             "oxygen": 50
@@ -48,7 +48,7 @@
     },
     {
         "id": 4,
-        "name": "Mega miner",
+        "name": "Mega Miner",
         "price": {
             "food": 200,
             "oxygen": 200
@@ -59,7 +59,7 @@
     },
     {
         "id": 5,
-        "name": "Solar panel",
+        "name": "Zonnepaneel",
         "price": {
             "moonstone": 100
         },
@@ -69,7 +69,7 @@
     },
     {
         "id": 6,
-        "name": "Nuclear reactor",
+        "name": "Kernreactor",
         "price": {
             "moonstone": 350
         },
@@ -79,7 +79,7 @@
     },
     {
         "id": 7,
-        "name": "Farm",
+        "name": "Boerderij Module",
         "price": {
             "moonstone": 100,
             "oxygen": 25,
@@ -92,7 +92,7 @@
     },
     {
         "id": 8,
-        "name": "Animal factory",
+        "name": "Dieren Module",
         "price": {
             "moonstone": 250,
             "oxygen": 50,
@@ -105,7 +105,7 @@
     },
     {
         "id": 9,
-        "name": "Water filter",
+        "name": "Water Filter",
         "price": {
             "moonstone": 100
         },
@@ -116,7 +116,7 @@
     },
     {
         "id": 10,
-        "name": "Oxygen filter",
+        "name": "Zuurstof Filter",
         "price": {
             "moonstone": 100
         },
@@ -127,27 +127,25 @@
     },
     {
         "id": 11,
-        "name": "Laser Turret",
+        "name": "Laser Toren",
         "price": {
             "moonstone": 150
         },
         "inc": {
             "energy": -2
-        },
-        "defense": 25
+        }
     },
     {
         "id": 12,
-        "name": "Rocket Turret",
+        "name": "Racket Toren",
         "price": {
             "moonstone": 250
         },
-        "inc": {},
-        "defense": 75
+        "inc": {}
     },
     {
         "id": 13,
-        "name": "Barracks",
+        "name": "Kaverne",
         "price": {
             "moonstone": 150,
             "oxygen": 50
@@ -169,7 +167,7 @@
     },
     {
         "id": 15,
-        "name": "Heavy Weapons Workplace",
+        "name": "Zware Wapens Werkplaats",
         "price": {
             "moonstone": 400,
             "oxygen": 200
@@ -181,7 +179,7 @@
 
     {
         "id": 50,
-        "name": "Gun Soldier",
+        "name": "Geweer Soldaat",
         "price": {
             "food": 25,
             "water": 20,
@@ -189,13 +187,11 @@
         },
         "inc": {
             "housingUsed": 1
-        },
-        "attack": 10,
-        "defense": 10
+        }
     },
     {
         "id": 51,
-        "name": "Laser Soldier",
+        "name": "Laser Soldaat",
         "price": {
             "food": 50,
             "water": 25,
@@ -203,13 +199,11 @@
         },
         "inc": {
             "housingUsed": 1
-        },
-        "attack": 5,
-        "defense": 15
+        }
     },
     {
         "id": 52,
-        "name": "Rocket Soldier",
+        "name": "Racket Soldaat",
         "price": {
             "food": 75,
             "water": 50,
@@ -217,9 +211,7 @@
         },
         "inc": {
             "housingUsed": 1
-        },
-        "attack": 20,
-        "defense": 5
+        }
     },
 
     {
@@ -232,9 +224,7 @@
         },
         "inc": {
             "housingUsed": 2
-        },
-        "attack": 20,
-        "defense": 10
+        }
     },
     {
         "id": 64,
@@ -246,9 +236,7 @@
         },
         "inc": {
             "housingUsed": 2
-        },
-        "attack": 10,
-        "defense": 25
+        }
     },
     {
         "id": 65,
@@ -260,8 +248,6 @@
         },
         "inc": {
             "housingUsed": 5
-        },
-        "attack": 50,
-        "defense": 35
+        }
     }
 ]

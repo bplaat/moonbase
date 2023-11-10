@@ -11,9 +11,9 @@ export default class World {
     constructor() {
         this.players = [
             new Player(0, 'China', { red: 255, green: 0, blue: 0 }),
-            new Player(1, 'European Union', { red: 0, green: 100, blue: 255 }),
+            new Player(1, 'Europese Unie', { red: 0, green: 100, blue: 255 }),
             new Player(2, 'India', { red: 255, green: 255, blue: 0 }),
-            new Player(3, 'United States', { red: 0, green: 255, blue: 0 }),
+            new Player(3, 'Verenigde Staten', { red: 0, green: 255, blue: 0 }),
         ];
     }
 

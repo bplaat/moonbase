@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="nl">
 
 <head>
     <meta charset="UTF-8">
@@ -38,7 +38,7 @@
     <div id="app">
         <h1>MoonBase Admin</h1>
 
-        <h2>Players Resources</h2>
+        <h2>Spelers Grondstoffen</h2>
         <ul>
             <li v-for="player in players" :key="player.id"
                 :style="{ backgroundColor: `rgb(${player.color.red}, ${player.color.green}, ${player.color.blue}, 0.25)` }">
@@ -66,10 +66,10 @@
             </li>
         </ul>
 
-        <h3>Modify Resources</h3>
+        <h3>Verander Grondstoffen</h3>
         <form @submit.prevent="resourcesFormSubmit">
             <select v-model="resourcesForm.playerId">
-                <option value="null" disabled>Choose a player:</option>
+                <option value="null" disabled>Kies een speler:</option>
                 <option v-for="player in players" :key="player.id" :value="player.id">{{ player.name }}</option>
             </select>
             🪨 <input type="number" v-model="resourcesForm.moonstone">
@@ -80,7 +80,7 @@
             <button type="submit">Modify</button>
         </form>
 
-        <h2>Players Units</h2>
+        <h2>Spelers Eenheden</h2>
         <ul>
             <li v-for="player in players" :key="player.id"
                 :style="{ backgroundColor: `rgb(${player.color.red}, ${player.color.green}, ${player.color.blue}, 0.25)` }">
@@ -95,43 +95,43 @@
             </li>
         </ul>
 
-        <h3>Buy Unit</h3>
+        <h3>Koop Eenheid</h3>
         <form @submit.prevent="unitBuyFormSubmit">
             <select v-model="unitBuyForm.playerId">
-                <option value="null" disabled>Choose a player:</option>
+                <option value="null" disabled>Kies een speler:</option>
                 <option v-for="player in players" :key="player.id" :value="player.id">{{ player.name }}</option>
             </select>
             <select v-model="unitBuyForm.unitTypeId">
-                <option value="null" disabled>Choose a unit type:</option>
+                <option value="null" disabled>Kies een eenheid type:</option>
                 <option v-for="unitType, id in unitTypes" :key="id" :value="id">{{ unitType.name }}</option>
             </select>
-            <button type="submit">Buy</button>
+            <button type="submit">Koop</button>
         </form>
 
-        <h3>Sell Unit</h3>
+        <h3>Verkoop Eenheid</h3>
         <form @submit.prevent="unitSellFormSubmit">
             <select v-model="unitSellForm.playerId">
-                <option value="null" disabled>Choose a player:</option>
+                <option value="null" disabled>Kies een speler:</option>
                 <option v-for="player in players" :key="player.id" :value="player.id">{{ player.name }}</option>
             </select>
             <select v-model="unitSellForm.unitTypeId">
-                <option value="null" disabled>Choose a unit type:</option>
+                <option value="null" disabled>Kies een eenheid type:</option>
                 <option v-for="unitType, id in unitTypes" :key="id" :value="id">{{ unitType.name }}</option>
             </select>
-            <button type="submit">Sell</button>
+            <button type="submit">Verkoop</button>
         </form>
 
-        <h3>Destroy Unit</h3>
+        <h3>Vernietig Eenheid</h3>
         <form @submit.prevent="unitDestroyFormSubmit">
             <select v-model="unitDestroyForm.playerId">
-                <option value="null" disabled>Choose a player:</option>
+                <option value="null" disabled>Kies een speler:</option>
                 <option v-for="player in players" :key="player.id" :value="player.id">{{ player.name }}</option>
             </select>
             <select v-model="unitDestroyForm.unitTypeId">
-                <option value="null" disabled>Choose a unit type:</option>
+                <option value="null" disabled>Kies een eenheid type:</option>
                 <option v-for="unitType, id in unitTypes" :key="id" :value="id">{{ unitType.name }}</option>
             </select>
-            <button type="submit">Destroy</button>
+            <button type="submit">Vernietig</button>
         </form>
     </div>
 
