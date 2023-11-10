@@ -60,7 +60,7 @@ typedef struct Player {
 size_t player_size = 0;
 Player players[4] = {0};
 
-void websocket_message(uint8_t *message, size_t size) {
+void websocket_on_message(uint8_t *message, size_t size) {
     size_t pos = 0;
     uint8_t type = message[pos++];
 
@@ -113,6 +113,49 @@ void websocket_message(uint8_t *message, size_t size) {
         player->housing = *(float *)&message[pos];
         pos += 4;
     }
+}
+
+void *websocket_thread(void *) {
+    int socketfd = net_socket(AF_INET, SOCK_STREAM, IPPROTO_IP);
+    struct hostent *hp = net_gethostbyname("localhost");
+    struct sockaddr_in server_address;
+    server_address.sin_family = AF_INET;
+    server_address.sin_port = htons(8080);
+    memcpy((char *)&server_address.sin_addr, hp->h_addr_list[0], hp->h_length);
+    net_connect(socketfd, (struct sockaddr *)&server_address, sizeof(server_address));
+
+    const char *upgrade_request =
+        "GET / HTTP/1.1\r\n"
+        "Host: localhost:8080\r\n"
+        "Connection: Upgrade\r\n"
+        "Upgrade: websocket\r\n"
+        "Sec-WebSocket-Version: 13\r\n"
+        "Sec-WebSocket-Key: 2cN9hgbncbm4s4W9z0/fKQ==\r\n\r\n";
+    net_send(socketfd, upgrade_request, strlen(upgrade_request), 0);
+
+    uint8_t recv_buffer[512];
+    net_recv(socketfd, recv_buffer, sizeof(recv_buffer), 0);
+
+    for (;;) {
+        // Read incoming websocket messages
+        int bytes_read = net_recv(socketfd, recv_buffer, sizeof(recv_buffer), 0);
+        if (bytes_read > 0) {
+            uint8_t frame_type = recv_buffer[0] & 15;
+            if (frame_type == 2) {
+                uint8_t playload_size = recv_buffer[1] & 127;
+                if (playload_size == 126) {
+                    websocket_on_message(&recv_buffer[2 + 2], *(uint16_t *)&recv_buffer[2]);
+                } else if (playload_size == 127) {
+                    websocket_on_message(&recv_buffer[2 + 4], *(uint32_t *)&recv_buffer[2]);
+                } else {
+                    websocket_on_message(&recv_buffer[2], playload_size);
+                }
+            }
+        }
+    }
+
+    net_close(socketfd);
+    return NULL;
 }
 
 int main(void) {
@@ -172,28 +215,11 @@ int main(void) {
     canvas_init();
     cursor_init();
 
-    // Connect to websocket server
+    // Create websocket thread
     net_init();
-
-    int socketfd = net_socket(AF_INET, SOCK_STREAM, IPPROTO_IP);
-    struct hostent *hp = net_gethostbyname("localhost");
-    struct sockaddr_in server_address;
-    server_address.sin_family = AF_INET;
-    server_address.sin_port = htons(8080);
-    memcpy((char *)&server_address.sin_addr, hp->h_addr_list[0], hp->h_length);
-    net_connect(socketfd, (struct sockaddr *)&server_address, sizeof(server_address));
-
-    const char *upgrade_request =
-        "GET / HTTP/1.1\r\n"
-        "Host: localhost:8080\r\n"
-        "Connection: Upgrade\r\n"
-        "Upgrade: websocket\r\n"
-        "Sec-WebSocket-Version: 13\r\n"
-        "Sec-WebSocket-Key: 2cN9hgbncbm4s4W9z0/fKQ==\r\n\r\n";
-    net_send(socketfd, upgrade_request, strlen(upgrade_request), 0);
-
-    uint8_t buffer[1024];
-    net_recv(socketfd, buffer, sizeof(buffer), 0);
+    lwp_t ws_thread;
+    uint8_t stack[4096];
+    LWP_CreateThread(&ws_thread, websocket_thread, NULL, stack, sizeof(stack), 0);
 
     // Game loop
     while (running) {
@@ -206,23 +232,7 @@ int main(void) {
             }
         }
 
-        // Read incoming websocket messages
-        int bytes_read = net_recv(socketfd, buffer, sizeof(buffer), 0);
-        if (bytes_read > 0) {
-            uint8_t frame_type = buffer[0] & 15;
-            if (frame_type == 2) {
-                uint8_t playload_size = buffer[1] & 127;
-                if (playload_size == 126) {
-                    websocket_message(&buffer[2 + 2], *(uint16_t *)&buffer[2]);
-                } else if (playload_size == 127) {
-                    websocket_message(&buffer[2 + 4], *(uint32_t *)&buffer[2]);
-                } else {
-                    websocket_message(&buffer[2], playload_size);
-                }
-            }
-        }
-
-        // ### Draw Screen ###
+        // Draw screen
         canvas_begin(screenmode->viWidth, screenmode->viHeight);
 
         float y = 0;
@@ -241,24 +251,29 @@ int main(void) {
 
             y0 = y + (screenmode->viHeight / player_size - 32 - 8 - 32) / 2;
             char buffer[255];
-            sprintf(buffer, u8"🪨 %d +%d", (int)player->moonstone, (int)player->moonstoneInc);
+            sprintf(buffer, player->moonstoneInc > 0 ? u8"🪨 %d +%d" : u8"🪨 %d %d", (int)player->moonstone,
+                    (int)player->moonstoneInc);
             canvas_fill_text(buffer, x, y0, 32, 0xffffffff);
             x += screenmode->viWidth / columns;
 
-            sprintf(buffer, u8"⚡ %d +%d", (int)player->energy, (int)player->energyInc);
+            sprintf(buffer, player->energyInc > 0 ? u8"⚡ %d +%d" : u8"⚡ %d %d", (int)player->energy,
+                    (int)player->energyInc);
             canvas_fill_text(buffer, x, y0, 32, 0xffffffff);
             x += screenmode->viWidth / columns;
 
-            sprintf(buffer, u8"🥩 %d +%d", (int)player->food, (int)player->foodInc);
+            sprintf(buffer, player->foodInc > 0 ? u8"🥩 %d +%d" : u8"🥩 %d %d", (int)player->food,
+                    (int)player->foodInc);
             canvas_fill_text(buffer, x, y0, 32, 0xffffffff);
 
             x = screenmode->viWidth / columns;
             y0 = y + (screenmode->viHeight / player_size - 32 - 8 - 32) / 2 + 32 + 8;
-            sprintf(buffer, u8"💧 %d +%d", (int)player->water, (int)player->waterInc);
+            sprintf(buffer, player->waterInc > 0 ? u8"💧 %d +%d" : u8"💧 %d %d", (int)player->water,
+                    (int)player->waterInc);
             canvas_fill_text(buffer, x, y0, 32, 0xffffffff);
             x += screenmode->viWidth / columns;
 
-            sprintf(buffer, u8"☁️ %d +%d", (int)player->oxygen, (int)player->oxygenInc);
+            sprintf(buffer, player->oxygenInc > 0 ? u8"☁️ %d +%d" : u8"☁️ %d %d", (int)player->oxygen,
+                    (int)player->oxygenInc);
             canvas_fill_text(buffer, x, y0, 32, 0xffffffff);
             x += screenmode->viWidth / columns;
 
@@ -285,8 +300,6 @@ int main(void) {
         VIDEO_WaitVSync();
         if (screenmode->viTVMode & VI_NON_INTERLACE) VIDEO_WaitVSync();
     }
-
-    net_close(socketfd);
 
     // Disconnect wpads
     WPAD_Disconnect(WPAD_CHAN_ALL);

@@ -81,18 +81,23 @@ void canvas_draw_image(GXTexObj *texture, float x, float y, float width, float h
 
     // Draw quad
     GX_Begin(GX_QUADS, GX_VTXFMT0, 4);
-    GX_Position2f32(0.5, -0.5);
-    GX_Color1u32(color);
-    GX_TexCoord2f32(1, 0);
-    GX_Position2f32(0.5, 0.5);
-    GX_Color1u32(color);
-    GX_TexCoord2f32(1, 1);
-    GX_Position2f32(-0.5, 0.5);
-    GX_Color1u32(color);
-    GX_TexCoord2f32(0, 1);
+
     GX_Position2f32(-0.5, -0.5);
     GX_Color1u32(color);
     GX_TexCoord2f32(0, 0);
+
+    GX_Position2f32(0.5, -0.5);
+    GX_Color1u32(color);
+    GX_TexCoord2f32(1, 0);
+
+    GX_Position2f32(0.5, 0.5);
+    GX_Color1u32(color);
+    GX_TexCoord2f32(1, 1);
+
+    GX_Position2f32(-0.5, 0.5);
+    GX_Color1u32(color);
+    GX_TexCoord2f32(0, 1);
+
     GX_End();
 }
 
@@ -180,18 +185,23 @@ void canvas_fill_text(char *text, float x, float y, float text_size, uint32_t co
         uint32_t c = font_char->c ? 0xffffffff : color;
 
         GX_Begin(GX_QUADS, GX_VTXFMT0, 4);
-        GX_Position2f32(0.5, -0.5);
-        GX_Color1u32(c);
-        GX_TexCoord2f32(right, top);
-        GX_Position2f32(0.5, 0.5);
-        GX_Color1u32(c);
-        GX_TexCoord2f32(right, bottom);
-        GX_Position2f32(-0.5, 0.5);
-        GX_Color1u32(c);
-        GX_TexCoord2f32(left, bottom);
+
         GX_Position2f32(-0.5, -0.5);
         GX_Color1u32(c);
         GX_TexCoord2f32(left, top);
+
+        GX_Position2f32(0.5, -0.5);
+        GX_Color1u32(c);
+        GX_TexCoord2f32(right, top);
+
+        GX_Position2f32(0.5, 0.5);
+        GX_Color1u32(c);
+        GX_TexCoord2f32(right, bottom);
+
+        GX_Position2f32(-0.5, 0.5);
+        GX_Color1u32(c);
+        GX_TexCoord2f32(left, bottom);
+
         GX_End();
 
         x += (font_char->w + 2) * scale;
