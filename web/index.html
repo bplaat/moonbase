@@ -137,12 +137,13 @@
 
     <script>
         const MessageType = {
-            PLAYER_UPDATE: 0x00,
-            PLAYER_MODIFY: 0x01,
+            PLAYER_UPDATE: 0x01,
+            PLAYER_MODIFY: 0x02,
             UNIT_BUY: 0x10,
             UNIT_SELL: 0x11,
             UNIT_DESTROY: 0x12,
-            UNIT_TYPES_JSON: 0x20,
+            UNIT_TYPES_JSON_REQ: 0x20,
+            UNIT_TYPES_JSON_RES: 0x21,
         };
 
         let ws;
@@ -176,6 +177,13 @@
             created() {
                 ws = new WebSocket('ws://localhost:8080/');
                 ws.binaryType = 'arraybuffer';
+                ws.onopen = () => {
+                    const message = new ArrayBuffer(1);
+                    let pos = 0;
+                    const view = new DataView(message);
+                    view.setUint8(pos++, MessageType.UNIT_TYPES_JSON_REQ);
+                    ws.send(message);
+                };
                 ws.onmessage = (event) => {
                     this.onMessage(event.data);
                 };
@@ -190,11 +198,11 @@
                     const view = new DataView(message);
                     view.setUint8(pos++, MessageType.PLAYER_MODIFY);
                     view.setUint8(pos++, this.resourcesForm.playerId);
-                    view.setFloat32(pos, this.resourcesForm.moonstone, true); pos += 4;
-                    view.setFloat32(pos, this.resourcesForm.energy, true); pos += 4;
-                    view.setFloat32(pos, this.resourcesForm.food, true); pos += 4;
-                    view.setFloat32(pos, this.resourcesForm.water, true); pos += 4;
-                    view.setFloat32(pos, this.resourcesForm.oxygen, true); pos += 4;
+                    view.setFloat32(pos, this.resourcesForm.moonstone); pos += 4;
+                    view.setFloat32(pos, this.resourcesForm.energy); pos += 4;
+                    view.setFloat32(pos, this.resourcesForm.food); pos += 4;
+                    view.setFloat32(pos, this.resourcesForm.water); pos += 4;
+                    view.setFloat32(pos, this.resourcesForm.oxygen); pos += 4;
                     ws.send(message);
 
                     this.resourcesForm.playerId = null;
@@ -258,7 +266,7 @@
                     let pos = 0;
                     const type = view.getUint8(pos++);
 
-                    if (type == MessageType.UNIT_TYPES_JSON) {
+                    if (type == MessageType.UNIT_TYPES_JSON_RES) {
                         const decoder = new TextDecoder();
                         const unitTypes = JSON.parse(decoder.decode(new Uint8Array(message, pos, message.byteLength - 1))); pos += message.byteLength - 1;
                         for (const unitType of unitTypes) {
@@ -278,7 +286,7 @@
                             this.players.push(player);
                         }
 
-                        const nameLength = view.getUint16(pos, true); pos += 2;
+                        const nameLength = view.getUint16(pos); pos += 2;
                         const decoder = new TextDecoder();
                         player.name = decoder.decode(new Uint8Array(message, pos, nameLength)); pos += nameLength;
                         player.color = {
@@ -287,20 +295,20 @@
                             blue: view.getUint8(pos++),
                         };
 
-                        player.moonstone = view.getFloat32(pos, true); pos += 4;
-                        player.moonstoneInc = view.getFloat32(pos, true); pos += 4;
-                        player.energy = view.getFloat32(pos, true); pos += 4;
-                        player.energyInc = view.getFloat32(pos, true); pos += 4;
-                        player.food = view.getFloat32(pos, true); pos += 4;
-                        player.foodInc = view.getFloat32(pos, true); pos += 4;
-                        player.water = view.getFloat32(pos, true); pos += 4;
-                        player.waterInc = view.getFloat32(pos, true); pos += 4;
-                        player.oxygen = view.getFloat32(pos, true); pos += 4;
-                        player.oxygenInc = view.getFloat32(pos, true); pos += 4;
-                        player.housingUsed = view.getFloat32(pos, true); pos += 4;
-                        player.housing = view.getFloat32(pos, true); pos += 4;
+                        player.moonstone = view.getFloat32(pos); pos += 4;
+                        player.moonstoneInc = view.getFloat32(pos); pos += 4;
+                        player.energy = view.getFloat32(pos); pos += 4;
+                        player.energyInc = view.getFloat32(pos); pos += 4;
+                        player.food = view.getFloat32(pos); pos += 4;
+                        player.foodInc = view.getFloat32(pos); pos += 4;
+                        player.water = view.getFloat32(pos); pos += 4;
+                        player.waterInc = view.getFloat32(pos); pos += 4;
+                        player.oxygen = view.getFloat32(pos); pos += 4;
+                        player.oxygenInc = view.getFloat32(pos); pos += 4;
+                        player.housingUsed = view.getFloat32(pos); pos += 4;
+                        player.housing = view.getFloat32(pos); pos += 4;
 
-                        const unitsLength = view.getUint16(pos, true); pos += 2;
+                        const unitsLength = view.getUint16(pos); pos += 2;
                         player.units = [];
                         for (let i = 0; i < unitsLength; i++) {
                             player.units.push({ typeId: view.getUint8(pos++) });

@@ -88,7 +88,7 @@
 
     <script>
         const MessageType = {
-            PLAYER_UPDATE: 0x00
+            PLAYER_UPDATE: 0x01,
         };
 
         const app = new Vue({
@@ -123,7 +123,7 @@
                             this.players.push(player);
                         }
 
-                        const nameLength = view.getUint16(pos, true); pos += 2;
+                        const nameLength = view.getUint16(pos); pos += 2;
                         const decoder = new TextDecoder();
                         player.name = decoder.decode(new Uint8Array(message, pos, nameLength)); pos += nameLength;
                         player.color = {
@@ -132,18 +132,18 @@
                             blue: view.getUint8(pos++),
                         };
 
-                        player.moonstone = view.getFloat32(pos, true); pos += 4;
-                        player.moonstoneInc = view.getFloat32(pos, true); pos += 4;
-                        player.energy = view.getFloat32(pos, true); pos += 4;
-                        player.energyInc = view.getFloat32(pos, true); pos += 4;
-                        player.food = view.getFloat32(pos, true); pos += 4;
-                        player.foodInc = view.getFloat32(pos, true); pos += 4;
-                        player.water = view.getFloat32(pos, true); pos += 4;
-                        player.waterInc = view.getFloat32(pos, true); pos += 4;
-                        player.oxygen = view.getFloat32(pos, true); pos += 4;
-                        player.oxygenInc = view.getFloat32(pos, true); pos += 4;
-                        player.housingUsed = view.getFloat32(pos, true); pos += 4;
-                        player.housing = view.getFloat32(pos, true); pos += 4;
+                        player.moonstone = view.getFloat32(pos); pos += 4;
+                        player.moonstoneInc = view.getFloat32(pos); pos += 4;
+                        player.energy = view.getFloat32(pos); pos += 4;
+                        player.energyInc = view.getFloat32(pos); pos += 4;
+                        player.food = view.getFloat32(pos); pos += 4;
+                        player.foodInc = view.getFloat32(pos); pos += 4;
+                        player.water = view.getFloat32(pos); pos += 4;
+                        player.waterInc = view.getFloat32(pos); pos += 4;
+                        player.oxygen = view.getFloat32(pos); pos += 4;
+                        player.oxygenInc = view.getFloat32(pos); pos += 4;
+                        player.housingUsed = view.getFloat32(pos); pos += 4;
+                        player.housing = view.getFloat32(pos); pos += 4;
                     }
                 }
             }

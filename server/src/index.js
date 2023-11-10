@@ -32,7 +32,7 @@ function broadcastPlayerUpdate(player) {
     let pos = 0;
     view.setUint8(pos++, MessageType.PLAYER_UPDATE);
     view.setUint8(pos++, player.id);
-    view.setUint16(pos, player.name.length, true); pos += 2;
+    view.setUint16(pos, player.name.length); pos += 2;
     for (let j = 0; j < player.name.length; j++) {
         view.setUint8(pos++, player.name.charCodeAt(j));
     }
@@ -40,20 +40,20 @@ function broadcastPlayerUpdate(player) {
     view.setUint8(pos++, player.color.green);
     view.setUint8(pos++, player.color.blue);
 
-    view.setFloat32(pos, player.moonstone, true); pos += 4;
-    view.setFloat32(pos, player.moonstoneInc, true); pos += 4;
-    view.setFloat32(pos, player.energy, true); pos += 4;
-    view.setFloat32(pos, player.energyInc, true); pos += 4;
-    view.setFloat32(pos, player.food, true); pos += 4;
-    view.setFloat32(pos, player.foodInc, true); pos += 4;
-    view.setFloat32(pos, player.water, true); pos += 4;
-    view.setFloat32(pos, player.waterInc, true); pos += 4;
-    view.setFloat32(pos, player.oxygen, true); pos += 4;
-    view.setFloat32(pos, player.oxygenInc, true); pos += 4;
-    view.setFloat32(pos, player.housingUsed, true); pos += 4;
-    view.setFloat32(pos, player.housing, true); pos += 4;
+    view.setFloat32(pos, player.moonstone); pos += 4;
+    view.setFloat32(pos, player.moonstoneInc); pos += 4;
+    view.setFloat32(pos, player.energy); pos += 4;
+    view.setFloat32(pos, player.energyInc); pos += 4;
+    view.setFloat32(pos, player.food); pos += 4;
+    view.setFloat32(pos, player.foodInc); pos += 4;
+    view.setFloat32(pos, player.water); pos += 4;
+    view.setFloat32(pos, player.waterInc); pos += 4;
+    view.setFloat32(pos, player.oxygen); pos += 4;
+    view.setFloat32(pos, player.oxygenInc); pos += 4;
+    view.setFloat32(pos, player.housingUsed); pos += 4;
+    view.setFloat32(pos, player.housing); pos += 4;
 
-    view.setUint16(pos, player.units.length, true); pos += 2;
+    view.setUint16(pos, player.units.length); pos += 2;
     for (const unit of player.units) {
         view.setUint8(pos++, unit.typeId);
     }
@@ -62,21 +62,9 @@ function broadcastPlayerUpdate(player) {
 
 const wss = new WebSocketServer({ port: 8080 });
 log.info('Websocket server is listening on: ws://localhost:8080/');
-wss.on('connection', async (ws) => {
+wss.on('connection', (ws) => {
     clients.push(ws);
-
-    // Send unit types json
-    const unitTypesJson = await readFile('src/units.json', { encoding: 'utf-8' });
-    const message = new ArrayBuffer(1 + unitTypesJson.length);
-    const view = new DataView(message);
-    let pos = 0;
-    view.setUint8(pos++, MessageType.UNIT_TYPES_JSON);
-    for (let j = 0; j < unitTypesJson.length; j++) {
-        view.setUint8(pos++, unitTypesJson.charCodeAt(j));
-    }
-    ws.send(message);
-
-    ws.on('message', (message) => {
+    ws.on('message', async (message) => {
         const data = new Uint8Array(message.byteLength);
         message.copy(data, 0);
         const view = new DataView(data.buffer);
@@ -147,6 +135,18 @@ wss.on('connection', async (ws) => {
                 player.calcInc();
                 world.save('data.json');
             }
+        }
+
+        if (type == MessageType.UNIT_TYPES_JSON_REQ) {
+            const unitTypesJson = await readFile('src/units.json', { encoding: 'utf-8' });
+            const message = new ArrayBuffer(1 + unitTypesJson.length);
+            const view = new DataView(message);
+            let pos = 0;
+            view.setUint8(pos++, MessageType.UNIT_TYPES_JSON_RES);
+            for (let j = 0; j < unitTypesJson.length; j++) {
+                view.setUint8(pos++, unitTypesJson.charCodeAt(j));
+            }
+            ws.send(message);
         }
     });
     ws.on('error', log.error);
