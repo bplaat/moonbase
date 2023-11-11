@@ -9,52 +9,70 @@
             "food": 10,
             "water": 10,
             "oxygen": 10,
-            "housing": 15
+            "housing": 10
         }
     },
     {
         "id": 1,
         "name": "Huis module",
         "price": {
-            "moonstone": 50,
-            "oxygen": 25
+            "moonstone": 200,
+            "oxygen": 150,
+            "energy":100
         },
         "inc": {
-            "housing": 5,
-            "energy": -5
+            "housing": 2,
+            "energy": -20,
+            "food": -2,
+            "water": -2,
+            "oxygen": -2
         }
     },
     {
         "id": 2,
         "name": "Mensen Centrum",
         "price": {
-            "moonstone": 250
+            "moonstone": 500,
+            "energy":250
         },
         "inc": {
-            "housing": 20,
-            "energy": -5
+            "housing": 5,
+            "energy": -40,
+            "food": -5,
+            "water": -5,
+            "oxygen": -5
         }
     },
     {
         "id": 3,
         "name": "Simpele Miner",
         "price": {
-            "food": 50,
-            "oxygen": 50
+            "food": 250,
+            "oxygen": 100,
+            "energy":50
         },
         "inc": {
-            "moonstone": 10
+            "moonstone": 15,
+            "energy":-15,
+            "food": -5,
+            "water": -2,
+            "oxygen": -2
         }
     },
     {
         "id": 4,
         "name": "Mega Miner",
         "price": {
-            "food": 200,
-            "oxygen": 200
+            "food": 500,
+            "oxygen": 500,
+            "energy": 150
         },
         "inc": {
-            "moonstone": 50
+            "moonstone": 35,
+            "energy":-50,
+            "food": -5,
+            "water": -10,
+            "oxygen": -10
         }
     },
     {
@@ -64,116 +82,92 @@
             "moonstone": 100
         },
         "inc": {
-            "energy": 10
+            "energy": 8
         }
     },
     {
         "id": 6,
         "name": "Kernreactor",
         "price": {
-            "moonstone": 350
+            "moonstone": 500
         },
         "inc": {
-            "energy": 20
+            "energy": 25,
+            "food": -2,
+            "water": -2,
+            "oxygen": -2
         }
     },
     {
         "id": 7,
         "name": "Boerderij Module",
         "price": {
-            "moonstone": 100,
-            "oxygen": 25,
-            "water": 25
+            "moonstone": 200,
+            "oxygen": 100,
+            "water": 100
         },
         "inc": {
             "food": 10,
-            "energy": -2
+            "energy": -5,
+            "water": -2,
+            "oxygen": -2
         }
     },
     {
         "id": 8,
         "name": "Dieren Module",
         "price": {
-            "moonstone": 250,
-            "oxygen": 50,
-            "water": 50
+            "moonstone": 350,
+            "oxygen": 100,
+            "water": 100
         },
         "inc": {
             "food": 25,
-            "energy": -5
+            "energy": -10,
+            "water": -5,
+            "oxygen": -5
         }
     },
     {
         "id": 9,
         "name": "Water Filter",
         "price": {
-            "moonstone": 100
+            "moonstone": 300
         },
         "inc": {
             "water": 10,
-            "energy": -2
+            "energy": -5
         }
     },
     {
         "id": 10,
         "name": "Zuurstof Filter",
         "price": {
-            "moonstone": 100
+            "moonstone": 200
         },
         "inc": {
             "oxygen": 10,
-            "energy": -2
+            "energy": -5
         }
     },
     {
         "id": 11,
         "name": "Laser Toren",
         "price": {
-            "moonstone": 150
+            "moonstone": 300
         },
         "inc": {
-            "energy": -2
+            "energy": -15
         }
     },
     {
         "id": 12,
-        "name": "Racket Toren",
+        "name": "Rocket Toren",
         "price": {
-            "moonstone": 250
-        },
-        "inc": {}
-    },
-    {
-        "id": 13,
-        "name": "Kaverne",
-        "price": {
-            "moonstone": 150,
-            "oxygen": 50
+            "moonstone": 500
         },
         "inc": {
-            "energy": -2
-        }
-    },
-    {
-        "id": 14,
-        "name": "Garage",
-        "price": {
-            "moonstone": 250,
-            "oxygen": 100
-        },
-        "inc": {
-            "energy": -5
-        }
-    },
-    {
-        "id": 15,
-        "name": "Zware Wapens Werkplaats",
-        "price": {
-            "moonstone": 400,
-            "oxygen": 200
-        },
-        "inc": {
-            "energy": -10
+            "energy":-25
         }
     },
 
@@ -181,11 +175,12 @@
         "id": 50,
         "name": "Geweer Soldaat",
         "price": {
-            "food": 25,
+            "food": 75,
             "water": 20,
             "oxygen": 20
         },
         "inc": {
+            "energy": -2,
             "housingUsed": 1
         }
     },
@@ -193,11 +188,12 @@
         "id": 51,
         "name": "Laser Soldaat",
         "price": {
-            "food": 50,
+            "food": 100,
             "water": 25,
             "oxygen": 20
         },
         "inc": {
+            "energy": -2,
             "housingUsed": 1
         }
     },
@@ -205,11 +201,12 @@
         "id": 52,
         "name": "Racket Soldaat",
         "price": {
-            "food": 75,
+            "food": 150,
             "water": 50,
             "oxygen": 20
         },
         "inc": {
+            "energy": -3,
             "housingUsed": 1
         }
     },
@@ -218,11 +215,12 @@
         "id": 63,
         "name": "Maanbuggy",
         "price": {
-            "moonstone": 100,
+            "moonstone": 350,
             "food": 50,
             "oxygen": 20
         },
         "inc": {
+            "energy": -5,
             "housingUsed": 2
         }
     },
@@ -230,11 +228,12 @@
         "id": 64,
         "name": "Moonzoomie",
         "price": {
-            "moonstone": 125,
+            "moonstone": 500,
             "food": 100,
             "oxygen": 50
         },
         "inc": {
+            "energy": -10,
             "housingUsed": 2
         }
     },
@@ -242,11 +241,12 @@
         "id": 65,
         "name": "Moontank",
         "price": {
-            "moonstone": 250,
+            "moonstone": 750,
             "food": 150,
             "oxygen": 100
         },
         "inc": {
+            "energy": -15,
             "housingUsed": 5
         }
     }
