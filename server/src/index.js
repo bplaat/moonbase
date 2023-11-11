@@ -74,11 +74,11 @@ wss.on('connection', (ws) => {
         if (type === MessageType.PLAYER_MODIFY) {
             const playerId = view.getUint8(pos++);
             const player = world.players.find(player => player.id === playerId);
-            player.moonstone = Math.max(player.moonstone + view.getFloat32(pos, true), 0); pos += 4;
-            player.energy = Math.max(player.energy + view.getFloat32(pos, true), 0); pos += 4;
-            player.food = Math.max(player.food + view.getFloat32(pos, true), 0); pos += 4;
-            player.water = Math.max(player.water + view.getFloat32(pos, true), 0); pos += 4;
-            player.oxygen = Math.max(player.oxygen + view.getFloat32(pos, true), 0); pos += 4;
+            player.moonstone = Math.max(player.moonstone + view.getFloat32(pos), 0); pos += 4;
+            player.energy = Math.max(player.energy + view.getFloat32(pos), 0); pos += 4;
+            player.food = Math.max(player.food + view.getFloat32(pos), 0); pos += 4;
+            player.water = Math.max(player.water + view.getFloat32(pos), 0); pos += 4;
+            player.oxygen = Math.max(player.oxygen + view.getFloat32(pos), 0); pos += 4;
             world.save('data.json');
         }
 
